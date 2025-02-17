@@ -6,7 +6,7 @@ class Config:
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = os.environ.get("SECRET_KEY", os.urandom(24))
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///:memory:")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "mysql+mysqlconnector://root:root@localhost/library_management")
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 
@@ -29,4 +29,4 @@ class TestConfig(Config):
     DEBUG = True
     TESTING = True
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "mysql+mysqlconnector://root:root@localhost/library_management")
