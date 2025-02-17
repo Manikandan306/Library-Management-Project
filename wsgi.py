@@ -10,7 +10,11 @@ from Library_Management_System import db
 from Library_Management_System.views import main
 
 application.register_blueprint(main)
-db.create_all()
+
+# Ensure that db.create_all() runs within the application context
+with application.app_context():
+    db.create_all()
+
 if __name__ == "__main__":
     HOST = os.environ.get("SERVER_HOST", "localhost")
     try:
