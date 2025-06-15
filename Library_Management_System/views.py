@@ -68,7 +68,7 @@ class RegisterView(MethodView):
     def post(self):
         name = request.form.get("name")
         email = request.form.get("email")
-        password = generate_password_hash(request.form.get("password"), method="sha256")
+        password = generate_password_hash(request.form.get("password"), method="pbkdf2:sha256")
         if User.query.filter_by(email=email).first():
             flash("User already exists!")
             return redirect(url_for("main.register"))
@@ -174,10 +174,16 @@ class IssueBookView(MethodView):
 
     def post(self):
         book_id = int(request.form.get("book"))
-        book = Copy.query.filter_by(book=book_id, issued_by=None).first()
+        book = Book.query.filter_by(id=book_id).first()
+
+        if book is None:
+            flash("Book not found!", "danger")
+            return redirect(url_for("views.IssueBook"))
+
         book.issued_by = current_user.id
-        book.copies.issued_copy += 1
-        book.copies.present_copy -= 1
+        book.issued_copy += 1
+        book.present_copy -= 1  # optional: if you're tracking present copies
+
         book.date_issued = datetime.now()
         book.date_return = datetime.now() + timedelta(days=1)
         db.session.commit()
